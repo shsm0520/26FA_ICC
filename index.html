@@ -1,1 +1,109 @@
-<h1>test</h1>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>국가별 학생 수</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f5f7fa;
+      color: #243042;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      background: #243042;
+      color: white;
+    }
+
+    th:last-child, td:last-child {
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <h1>국가별 학생 수</h1>
+  <p id="status" role="status">데이터를 불러오는 중...</p>
+
+  <table hidden id="student-table">
+    <thead>
+      <tr>
+        <th scope="col">국가</th>
+        <th scope="col">학생 수</th>
+      </tr>
+    </thead>
+    <tbody id="student-list"></tbody>
+  </table>
+
+  <script>
+    // 실제 Azure 함수 주소로 변경하세요.
+    const API_URL =
+      "https://26studentapi-apbgh2hyane7gwh9.westus3-01.azurewebsites.net/api/httpTrigger2";
+
+    async function loadStudents() {
+      const status = document.getElementById("status");
+      const list = document.getElementById("student-list");
+      const table = document.getElementById("student-table");
+
+      try {
+        const response = await fetch(API_URL);
+
+        if (!response.ok) {
+          throw new Error(`조회 실패: HTTP ${response.status}`);
+        }
+
+        const students = await response.json();
+
+        if (!Array.isArray(students)) {
+          throw new Error("응답이 배열 형식이 아닙니다.");
+        }
+
+        // 학생 수가 많은 국가부터 표시합니다.
+        students.sort((a, b) => b.StudentCount - a.StudentCount);
+
+        let total = 0;
+
+        for (const student of students) {
+          const row = document.createElement("tr");
+          const country = document.createElement("td");
+          const count = document.createElement("td");
+
+          country.textContent = student.Country ?? "미입력";
+          count.textContent = student.StudentCount.toLocaleString("ko-KR");
+
+          row.append(country, count);
+          list.appendChild(row);
+
+          total += student.StudentCount;
+        }
+
+        status.textContent =
+          `총 ${students.length}개 국가 · 학생 ${total.toLocaleString("ko-KR")}명`;
+
+        table.hidden = false;
+      } catch (error) {
+        console.error(error);
+        status.textContent =
+          "데이터를 불러오지 못했습니다. 함수 주소와 연결 설정을 확인하세요.";
+      }
+    }
+
+    loadStudents();
+  </script>
+</body>
+</html>
