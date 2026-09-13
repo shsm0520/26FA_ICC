@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>국가별 학생 수</title>
+  <title>Students by Country</title>
+  <link rel="icon" href="data:,">
   <style>
     body {
       font-family: sans-serif;
@@ -37,21 +38,21 @@
   </style>
 </head>
 <body>
-  <h1>국가별 학생 수</h1>
-  <p id="status" role="status">데이터를 불러오는 중...</p>
+  <h1>Students by Country</h1>
+  <p id="status" role="status">Loading data...</p>
 
   <table hidden id="student-table">
     <thead>
       <tr>
-        <th scope="col">국가</th>
-        <th scope="col">학생 수</th>
+        <th scope="col">Country</th>
+        <th scope="col">Student Count</th>
       </tr>
     </thead>
     <tbody id="student-list"></tbody>
   </table>
 
   <script>
-    // 실제 Azure 함수 주소로 변경하세요.
+    // Azure Function endpoint
     const API_URL =
       "https://26studentapi-apbgh2hyane7gwh9.westus3-01.azurewebsites.net/api/httpTrigger2";
 
@@ -64,16 +65,16 @@
         const response = await fetch(API_URL);
 
         if (!response.ok) {
-          throw new Error(`조회 실패: HTTP ${response.status}`);
+          throw new Error(`Request failed: HTTP ${response.status}`);
         }
 
         const students = await response.json();
 
         if (!Array.isArray(students)) {
-          throw new Error("응답이 배열 형식이 아닙니다.");
+          throw new Error("The response is not an array.");
         }
 
-        // 학생 수가 많은 국가부터 표시합니다.
+        // Sort by student count in descending order.
         students.sort((a, b) => b.StudentCount - a.StudentCount);
 
         let total = 0;
@@ -83,8 +84,8 @@
           const country = document.createElement("td");
           const count = document.createElement("td");
 
-          country.textContent = student.Country ?? "미입력";
-          count.textContent = student.StudentCount.toLocaleString("ko-KR");
+          country.textContent = student.Country ?? "Not specified";
+          count.textContent = student.StudentCount.toLocaleString("en-US");
 
           row.append(country, count);
           list.appendChild(row);
@@ -93,13 +94,13 @@
         }
 
         status.textContent =
-          `총 ${students.length}개 국가 · 학생 ${total.toLocaleString("ko-KR")}명`;
+          `${students.length} countries · ${total.toLocaleString("en-US")} students`;
 
         table.hidden = false;
       } catch (error) {
         console.error(error);
         status.textContent =
-          "데이터를 불러오지 못했습니다. 함수 주소와 연결 설정을 확인하세요.";
+          "Unable to load data. Please check the API URL and connection settings.";
       }
     }
 
