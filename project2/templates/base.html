@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>EC2 Member Portal</title>
+    <style>
+      body {
+        font: 16px system-ui;
+        background: #eef2f6;
+        color: #172536;
+        margin: 0;
+      }
+      main {
+        max-width: 620px;
+        margin: 45px auto;
+        padding: 32px;
+        background: white;
+        border-radius: 16px;
+      }
+      nav {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+      }
+      a {
+        color: #1755a5;
+      }
+      label {
+        display: block;
+        margin-top: 16px;
+      }
+      input,
+      textarea {
+        box-sizing: border-box;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #aebdcb;
+        border-radius: 6px;
+        font: inherit;
+      }
+      button,
+      .button {
+        display: inline-block;
+        background: #1755a5;
+        color: white;
+        border: 0;
+        border-radius: 6px;
+        padding: 11px 18px;
+        margin-top: 18px;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .error {
+        padding: 12px;
+        background: #fff0df;
+      }
+      dt {
+        font-weight: bold;
+        margin-top: 18px;
+      }
+      dd {
+        margin: 5px 0;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+      }
+      nav button {
+        margin: 0;
+        padding: 6px 12px;
+      }
+      small {
+        color: #526375;
+      }
+      main {
+        max-width: 1050px;
+      }
+      .brand {
+        font-weight: 800;
+        text-decoration: none;
+        margin-right: auto;
+      }
+      nav {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 22px;
+        margin-bottom: 30px;
+      }
+      .hero {
+        padding: 38px 0 52px;
+        max-width: 650px;
+      }
+      .hero h1 {
+        font-size: clamp(38px, 6vw, 64px);
+        letter-spacing: -2px;
+        line-height: 1.05;
+      }
+      .hero p {
+        line-height: 1.7;
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 2px;
+        color: #1755a5;
+        font-weight: 700;
+      }
+      .secondary {
+        background: #e8eff8;
+        color: #1755a5;
+      }
+      .features,
+      .dashboard {
+        display: grid;
+        gap: 22px;
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .features article,
+      .panel {
+        background: #f7f9fc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+      }
+      .dashboard {
+        grid-template-columns: 1fr 1.4fr;
+      }
+      .library {
+        margin-top: 24px;
+      }
+      .count {
+        font-size: 14px;
+        color: #526375;
+        font-weight: 400;
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      th,
+      td {
+        padding: 15px 10px;
+        border-bottom: 1px solid #dce4ed;
+      }
+      th {
+        font-size: 12px;
+        color: #526375;
+      }
+      .filename {
+        overflow-wrap: anywhere;
+        max-width: 300px;
+      }
+      .empty {
+        padding: 22px 0;
+        color: #526375;
+      }
+      @media (max-width: 650px) {
+        main {
+          margin: 12px;
+          padding: 20px;
+        }
+        .dashboard,
+        .features {
+          grid-template-columns: 1fr;
+        }
+        nav {
+          gap: 12px;
+          font-size: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav>
+        <a class="brand" href="{{url_for('index')}}">Text Library</a>{% if
+        g.user %}
+        <form method="post" action="{{url_for('logout')}}">
+          <input type="hidden" name="csrf" value="{{csrf_token()}}" /><button>
+            Log out
+          </button>
+        </form>
+        {% else %}<a class="button secondary" href="{{url_for('login')}}"
+          >Log in</a
+        >
+        <a class="button" href="{{url_for('register')}}">Create an account</a>{%
+        endif %}
+      </nav>
+      {% for message in get_flashed_messages() %}
+      <p class="error" role="alert">{{message}}</p>
+      {% endfor %}{% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block content %}
+<section class="hero">
+  <p class="eyebrow">YOUR PERSONAL TEXT LIBRARY</p>
+  <h1>Text Library</h1>
+  <a class="button" href="{{url_for('register')}}">Create an account</a>
+  <a class="button secondary" href="{{url_for('login')}}">Log in</a>
+</section>
+{% endblock %}

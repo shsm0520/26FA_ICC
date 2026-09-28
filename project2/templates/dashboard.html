@@ -1,0 +1,85 @@
+{% extends 'base.html' %}{% block content %}
+<p class="eyebrow">YOUR WORKSPACE</p>
+<h1>Hello, {{user['first_name']}}.</h1>
+<div class="dashboard">
+  <section class="panel">
+    <h2>Your details</h2>
+    <dl>
+      {% for name,label in [('username','Username'),('first_name','First
+      name'),('last_name','Last name'),('email','Email'),('address','Address')]
+      %}
+      <dt>{{label}}</dt>
+      <dd>{{user[name]}}</dd>
+      {% endfor %}
+    </dl>
+  </section>
+  <section class="panel">
+    <h2>Add text files</h2>
+    <p>
+      Upload Limerick (1).txt or other text files. Existing uploads stay in your
+      library.
+    </p>
+    <form
+      action="{{url_for('upload')}}"
+      method="post"
+      enctype="multipart/form-data"
+    >
+      <input type="hidden" name="csrf" value="{{csrf_token()}}" /><label
+        for="files"
+        >Choose files</label
+      ><input
+        id="files"
+        name="files"
+        type="file"
+        multiple
+        accept=".txt,text/plain"
+        required
+      />
+      <p>
+        <small
+          >Up to 10 UTF-8 text files per upload. 2 MiB per file; entire upload
+          under 10 MiB.</small
+        >
+      </p>
+      <button>Upload files</button>
+    </form>
+  </section>
+</div>
+<section class="panel library">
+  <h2>Your library <span class="count">{{files|length}} files</span></h2>
+  {% if files %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Words</th>
+          <th>Uploaded (UTC)</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for file in files %}
+        <tr>
+          <td class="filename">{{file['original_name']}}</td>
+          <td>{{file['word_count']}}</td>
+          <td>{{file['created_at']}}</td>
+          <td>
+            <a
+              href="{{url_for('download',file_id=file['id'])}}"
+              aria-label="Download {{file['original_name']}}"
+              >Download</a
+            >
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="empty">
+    No files yet. Upload your first text file above to see its word count here.
+  </p>
+  {% endif %}
+</section>
+{% endblock %}

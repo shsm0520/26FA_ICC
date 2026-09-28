@@ -1,0 +1,29 @@
+{% extends 'base.html' %}{% block content %}
+<h1>Create your account</h1>
+<p>Enter your details. You can upload files after signing up.</p>
+<form method="post">
+  <input type="hidden" name="csrf" value="{{csrf_token()}}" /> {% for
+  name,label,type in [('username','Username','text'),('first_name','First
+  name','text'),('last_name','Last
+  name','text'),('email','Email','email'),('address','Address','text')] %}<label
+    for="{{name}}"
+    >{{label}}</label
+  ><input
+    id="{{name}}"
+    name="{{name}}"
+    type="{{type}}"
+    maxlength="500"
+    value="{{request.form.get(name,'')}}"
+    required
+  />{% endfor %} <label for="password">Password</label
+  ><input
+    id="password"
+    name="password"
+    type="password"
+    minlength="8"
+    maxlength="128"
+    autocomplete="new-password"
+    required
+  /><small>8–128 characters</small> <br /><button>Create account</button>
+</form>
+{% endblock %}
